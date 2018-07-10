@@ -6,17 +6,17 @@
 //
 
 import Foundation
-import HNAModule
+import FastModule
 
 internal class CellData {
     let pattern: String
     var parameters: [String: Any]?
-    let rawRequest: HNARequest
+    let rawRequest: Request
     let id: String = UUID().uuidString
     let isStatic: Bool
     let size: String?
     
-    init(pattern: String, rawRequest: HNARequest, isStatic: Bool, size: String?) {
+    init(pattern: String, rawRequest: Request, isStatic: Bool, size: String?) {
         self.pattern = pattern
         self.isStatic = isStatic
         self.rawRequest = rawRequest
@@ -57,7 +57,7 @@ public class ListViewModel {
         return data[indexPath.section]?[indexPath.row].pattern
     }
     
-    internal func request(for indexPath: IndexPath) -> HNARequest? {
+    internal func request(for indexPath: IndexPath) -> Request? {
         return data[indexPath.section]?[indexPath.row].rawRequest
     }
     

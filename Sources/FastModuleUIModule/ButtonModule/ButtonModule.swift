@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import HNAModule
-import HNAModuleLayoutable
+import FastModule
+import FastModuleLayoutable
 
 public class ButtonModule: Layoutable {
     public enum ActionKey: String {
@@ -28,7 +28,7 @@ public class ButtonModule: Layoutable {
     
     public static var routePriority: Int = 1
     
-    public required init(request: HNARequest) {}
+    public required init(request: Request) {}
     
     @objc func tapped() {
         self.notify(action: ActionKey.tapped.rawValue, value: ())
@@ -40,33 +40,30 @@ public class ButtonModule: Layoutable {
         button.addTarget(self, action: #selector(tapped), for: .touchUpInside)
         
         bindAction(pattern: "image/:image/:state") { [weak self] parameter, responder, request in
-            guard let image = parameter.value(":image", type: UIImage.self) else {
-                responder.failure(error: ModuleError.missingParameter(":image"))
-                return
+            
+            do {
+                let image = try parameter.required(":image", type: UIImage.self)
+                let state = try parameter.required(":state", type: String.self)
+                
+                self?.button.setImage(image, for: UIControlStateString(rawValue: state)?.state ?? .normal)
+                responder.success(value: image)
+            } catch {
+                responder.failure(error: error)
             }
             
-            guard let state = parameter.value(":state", type: String.self) else {
-                responder.failure(error: ModuleError.missingParameter(":state"))
-                return
-            }
-            
-            self?.button.setImage(image, for: UIControlStateString(rawValue: state)?.state ?? .normal)
-            responder.success(value: image)
         }
         
         bindAction(pattern: "title/:title/:state") { [weak self] parameter, responder, request in
-            guard let title = parameter.value(":title", type: String.self) else {
-                responder.failure(error: ModuleError.missingParameter(":title"))
-                return
-            }
             
-            guard let state = parameter.value(":state", type: String.self) else {
-                responder.failure(error: ModuleError.missingParameter(":state"))
-                return
+            do {
+                let title = try parameter.required(":title", type: String.self)
+                let state = try parameter.required(":state", type: String.self)
+                
+                self?.button.setTitle(title, for: UIControlStateString(rawValue: state)?.state ?? .normal)
+                responder.success(value: title)
+            } catch {
+                responder.failure(error: error)
             }
-            
-            self?.button.setTitle(title, for: UIControlStateString(rawValue: state)?.state ?? .normal)
-            responder.success(value: title)
         }
     }
 }

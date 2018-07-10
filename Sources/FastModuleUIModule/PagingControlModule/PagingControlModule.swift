@@ -7,8 +7,8 @@
 
 import Foundation
 import UIKit
-import HNAModule
-import HNAModuleLayoutable
+import FastModule
+import FastModuleLayoutable
 
 public class PagingControlModule: Layoutable {
     private let pagingControl = UIPageControl()
@@ -24,7 +24,7 @@ public class PagingControlModule: Layoutable {
     
     public static var routePriority: Int = 1
     
-    public required init(request: HNARequest) {}
+    public required init(request: Request) {}
     
     public func didInit() {
         bindProperty(key: "numberOfPages", type: Int.self) { [weak self] in

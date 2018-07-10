@@ -55,9 +55,9 @@ public class CollectionViewAdapter: NSObject, UICollectionViewDataSource, UIColl
     private var page: CGFloat = 0
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView.isPagingEnabled {
-            let c_page = floor((scrollView.contentOffset.x + scrollView.bounds.width / 2) / scrollView.bounds.width)
-            if c_page != page {
-                page = c_page
+            let currentPage = floor((scrollView.contentOffset.x + scrollView.bounds.width / 2) / scrollView.bounds.width)
+            if currentPage != page {
+                page = currentPage
                 viewModel.changePageNumber(Int(page))
             }
         }
@@ -67,7 +67,7 @@ public class CollectionViewAdapter: NSObject, UICollectionViewDataSource, UIColl
         let cellData = viewModel.cellData(for: indexPath)
         
         if !registered.contains(cellData.pattern) {
-            /// 根据 url 来判断重用的 cell
+            // get reuse cell type based on url
             collectionView.register(GeneralCell.self, forCellWithReuseIdentifier: cellData.pattern)
             registered.append(cellData.pattern)
         }
@@ -80,23 +80,23 @@ public class CollectionViewAdapter: NSObject, UICollectionViewDataSource, UIColl
     public func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         var view = UICollectionReusableView()
         if let cellData = viewModel.sectionHeaderData(section: indexPath.section) {
-            if kind == UICollectionElementKindSectionHeader {
-                let resultIdentifier = cellData.pattern + UICollectionElementKindSectionHeader
+            if kind == UICollectionView.elementKindSectionHeader {
+                let resultIdentifier = cellData.pattern + UICollectionView.elementKindSectionHeader
                 if !registered.contains(resultIdentifier) {
-                    /// 根据 url 来判断重用的 cell
-                    collectionView.register(GeneralReuseView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: resultIdentifier)
+                    // get reuse cell type based on url
+                    collectionView.register(GeneralReuseView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: resultIdentifier)
                     registered.append(resultIdentifier)
                 }
-                let container = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionElementKindSectionHeader, withReuseIdentifier: resultIdentifier, for: indexPath) as! GeneralReuseView
+                let container = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: resultIdentifier, for: indexPath) as! GeneralReuseView
                 view = container
             } else {
-                let resultIdentifier = cellData.pattern + UICollectionElementKindSectionFooter
+                let resultIdentifier = cellData.pattern + UICollectionView.elementKindSectionFooter
                 if !registered.contains(resultIdentifier) {
-                    /// 根据 url 来判断重用的 cell
-                    collectionView.register(GeneralReuseView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: resultIdentifier)
+                    // get reuse cell type based on url
+                    collectionView.register(GeneralReuseView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: resultIdentifier)
                     registered.append(resultIdentifier)
                 }
-                let container = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionElementKindSectionFooter, withReuseIdentifier: resultIdentifier, for: indexPath) as! GeneralReuseView
+                let container = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: resultIdentifier, for: indexPath) as! GeneralReuseView
                 view = container
             }
         }
@@ -162,7 +162,7 @@ public class CollectionViewAdapter: NSObject, UICollectionViewDataSource, UIColl
         
         var size = CGSize.zero
         
-        // priority 1: 如果在参数中指定了大小，使用之
+        // priority 1: if the size if specified in parameter, use it
         if let s = cellData.size {
             if case let sizeComp = s.components(separatedBy: "x"),
                 sizeComp.count == 2 && sizeComp[0].count > 0 && sizeComp[1].count > 0 {

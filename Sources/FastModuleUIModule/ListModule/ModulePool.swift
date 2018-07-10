@@ -6,15 +6,19 @@
 //
 
 import Foundation
-import HNAModule
-import HNAModuleLayoutable
+import FastModule
+import FastModuleLayoutable
 
+/// module is put in this pool, just like the cell reuse pool, actrually, they are synchorolized
 internal class ModulePool {
     private var nestedEventAction: (Event) -> Void
+
     internal init(nestedEventAction: @escaping (Event) -> Void) {
         self.nestedEventAction = nestedEventAction
     }
+
     private var pool: [String: [Layoutable]] = [:]
+
     private var staticPool: [String: Layoutable] = [:]
     
     private func createModuleInstance(cellData: CellData) -> Layoutable {
@@ -22,6 +26,7 @@ internal class ModulePool {
             fatalError("\(cellData.rawRequest.module) is not layoutable")
         }
         
+        // delegate all event in module, and put in side of nextedEventAction and notify observer on list modual
         layoutable.observeEvent(action: "*", callback: {
             self.nestedEventAction($0)
         })

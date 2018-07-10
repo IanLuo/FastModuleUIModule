@@ -32,7 +32,7 @@ public class ImageModule: Layoutable {
     
     public static var routePriority: Int = 0
     
-    public required init(request: HNARequest) {}
+    public required init(request: Request) {}
     
     public func didInit() {
         observeValue(action: "image", type: UIImage.self) { [weak self] in

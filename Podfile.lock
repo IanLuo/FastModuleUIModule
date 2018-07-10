@@ -1,10 +1,14 @@
 PODS:
+  - Alamofire (4.7.3)
   - Aspects (1.4.1)
   - FastModule (0.0.1)
   - FastModuleLayoutable (0.0.1):
     - Aspects (~> 1.4.1)
     - FastModule
     - YogaKit
+  - FastModuleNetwork (0.0.1):
+    - Alamofire
+    - FastModule
   - FastModuleRoutable (0.0.1):
     - FastModule
     - FastModuleLayoutable
@@ -13,32 +17,52 @@ PODS:
     - Yoga (~> 1.8.1)
 
 DEPENDENCIES:
-  - FastModule (from `../FastModule`)
-  - FastModuleLayoutable (from `../FastModuleLayoutable`)
-  - FastModuleRoutable (from `../FastModuleRoutable`)
+  - "FastModule (from `git@github.com:IanLuo/FastModule.git`)"
+  - "FastModuleLayoutable (from `git@github.com:IanLuo/FastModuleLayoutable.git`)"
+  - "FastModuleNetwork (from `git@github.com:IanLuo/FastModuleNetwork.git`)"
+  - "FastModuleRoutable (from `git@github.com:IanLuo/FastModuleRoutable.git`)"
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
+    - Alamofire
     - Aspects
     - Yoga
     - YogaKit
 
 EXTERNAL SOURCES:
   FastModule:
-    :path: "../FastModule"
+    :git: "git@github.com:IanLuo/FastModule.git"
   FastModuleLayoutable:
-    :path: "../FastModuleLayoutable"
+    :git: "git@github.com:IanLuo/FastModuleLayoutable.git"
+  FastModuleNetwork:
+    :git: "git@github.com:IanLuo/FastModuleNetwork.git"
   FastModuleRoutable:
-    :path: "../FastModuleRoutable"
+    :git: "git@github.com:IanLuo/FastModuleRoutable.git"
+
+CHECKOUT OPTIONS:
+  FastModule:
+    :commit: 24703d97ebeacd9b95489f085c85b36cfa9fb4c7
+    :git: "git@github.com:IanLuo/FastModule.git"
+  FastModuleLayoutable:
+    :commit: 1b0ad8ee773dca3819d199cc36f49e92a3bb690a
+    :git: "git@github.com:IanLuo/FastModuleLayoutable.git"
+  FastModuleNetwork:
+    :commit: bb1138f1bfe3fb908676e62c5b81bced9e564da1
+    :git: "git@github.com:IanLuo/FastModuleNetwork.git"
+  FastModuleRoutable:
+    :commit: 041f58e3bac428f978733c5105ebc01b17d6d35b
+    :git: "git@github.com:IanLuo/FastModuleRoutable.git"
 
 SPEC CHECKSUMS:
+  Alamofire: c7287b6e5d7da964a70935e5db17046b7fde6568
   Aspects: 7595ba96a6727a58ebcbfc954497fc5d2fdde546
-  FastModule: 8889a8794a6adcf8d678769c7a551236d11d5071
-  FastModuleLayoutable: 9316c4ec8302259887414a8387abda9a68b396b3
-  FastModuleRoutable: a33c42a60b83e86272dfe8908d068e2ccec7b9a2
+  FastModule: 02b49485888287dbb7b246611e28ca006b927776
+  FastModuleLayoutable: 163fad52b5241e2d07ce5eafff950f32196b26bb
+  FastModuleNetwork: dbf47d65027be6eef326fbf1ed15aa49824bea7b
+  FastModuleRoutable: 95e49bb5ea9d8ef3d8c97a12e80146c97682e71b
   Yoga: e6f1fed82138c17da5332e15e5770abf0e9cc386
   YogaKit: bb90d11e297e06abef7e0cfb20e035a6bd00cdc4
 
-PODFILE CHECKSUM: f57ef80cbaa64c3bc5ed553b35a5c34b3c74f7af
+PODFILE CHECKSUM: 4c8ee0afa9d802f3e29cc476fab655ba8b0679f4
 
 COCOAPODS: 1.5.3

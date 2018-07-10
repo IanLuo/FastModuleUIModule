@@ -6,15 +6,15 @@
 //
 
 import Foundation
-import HNAModule
-import HNAModuleRoutable
+import FastModule
+import FastModuleRoutable
 
 public class UIModule: Module {
     public static var identifier: String = ""
     
     public static var routePriority: Int = 1
     
-    public required init(request: HNARequest) {
+    public required init(request: Request) {
         
     }
     
@@ -37,7 +37,7 @@ public enum UIControlStateString: String {
     case selected
     case highlighted
     
-    public var state: UIControlState {
+    public var state: UIControl.State {
         switch self {
         case .normal: return .normal
         case .selected: return .selected

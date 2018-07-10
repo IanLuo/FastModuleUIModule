@@ -24,5 +24,5 @@ public class SegmentContainerModule: Routable {
     
     public static var routePriority: Int = 1
     
-    public required init(request: HNARequest) {}
+    public required init(request: Request) {}
 }

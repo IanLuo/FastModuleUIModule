@@ -7,8 +7,8 @@
 
 import Foundation
 import UIKit
-import HNAModule
-import HNAModuleLayoutable
+import FastModule
+import FastModuleLayoutable
 
 public class GeneralReuseView: UICollectionReusableView {
     internal var layoutabel: Layoutable?

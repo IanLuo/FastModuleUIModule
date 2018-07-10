@@ -15,7 +15,7 @@ public class LoadingViewModule: Layoutable {
         
     }
     
-    private let activityIndicator: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
+    private let activityIndicator: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorView.Style.gray)
     
     public var view: UIView {
         return activityIndicator
@@ -25,7 +25,7 @@ public class LoadingViewModule: Layoutable {
     
     public static var routePriority: Int = 1
     
-    public required init(request: HNARequest) {}
+    public required init(request: Request) {}
     
     public func didInit() {
         bindAction(pattern: "start") { [weak self] (_, responder, _) in

@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import HNAModule
-import HNAModuleLayoutable
+import FastModule
+import FastModuleLayoutable
 
 public class SegmentModule: Layoutable {
     public func layoutContent() {
@@ -24,7 +24,7 @@ public class SegmentModule: Layoutable {
     
     public static var routePriority: Int = 1
     
-    public required init(request: HNARequest) {
+    public required init(request: Request) {
         
     }
 }

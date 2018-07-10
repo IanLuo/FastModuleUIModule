@@ -1,13 +1,13 @@
 import Foundation
 import UIKit
-import HNAModule
-import HNAModuleLayoutable
+import FastModule
+import FastModuleLayoutable
 
 public struct ModuleAction {
     
 }
 
-public class ListModule: NSObject, HNAModule.Module, Layoutable {
+public class ListModule: NSObject, FastModule.Module, Layoutable {
     public func layoutContent() {
         
     }
@@ -36,7 +36,7 @@ public class ListModule: NSObject, HNAModule.Module, Layoutable {
     
     public static var routePriority: Int = 1
     
-    public required init(request: HNARequest) {
+    public required init(request: Request) {
         
     }
     
@@ -50,7 +50,7 @@ public class ListModule: NSObject, HNAModule.Module, Layoutable {
             guard let section = parameter.int(":section")
                 else { responder.failure(error: ModuleError.missingParameter(":section")); return }
             
-            guard let request = parameter.value(":request", type: HNAModule.HNARequest.self)
+            guard let request = parameter.value(":request", type: FastModule.Request.self)
                 else { responder.failure(error: ModuleError.missingParameter(":request")); return }
             
 
@@ -65,57 +65,65 @@ public class ListModule: NSObject, HNAModule.Module, Layoutable {
         }
         
         bindAction(pattern: "header/:section/:request") { [weak self] (parameter, responder, request) in
-            guard let section = parameter.int(":section")
-                else { responder.failure(error: ModuleError.missingParameter(":section")); return }
             
-            guard let request = parameter.value(":request", type: HNAModule.HNARequest.self)
-                else { responder.failure(error: ModuleError.missingParameter(":request")); return }
-            
-            let newCellData = CellData(
-                pattern: request.pattern,
-                rawRequest: request,
-                isStatic: parameter.truthy("static"),
-                size: parameter["size"] as? String
-            )
-            
-            self?.collectionAdapter.header(cellData: newCellData, section: section)
-            responder.success(value: ())
+            do {
+                let section = try parameter.required(":section", type: Int.self)
+                let request = try parameter.required(":request", type: FastModule.Request.self)
+                
+                let newCellData = CellData.init(
+                    pattern: request.pattern,
+                    rawRequest: request,
+                    isStatic: parameter.truthy("static"),
+                    size: parameter["size"] as? String
+                )
+                
+                self?.collectionAdapter.header(cellData: newCellData, section: section)
+                responder.success(value: ())
+            } catch {
+                responder.failure(error: error)
+            }
         }
         
         bindAction(pattern: "batch-insert/:section/:requests") { [handleInsert] parameter, responder, request in
-            guard let section = parameter.int(":section")
-                else { responder.failure(error: ModuleError.missingParameter(":section")); return }
             
-            guard let requests = parameter.value(":requests", type: [HNAModule.HNARequest].self)
-                else { responder.failure(error: ModuleError.missingParameter(":requests")); return }
+            do {
+                let section = try parameter.required(":section", type: Int.self)
+                let requests = try parameter.required(":requests", type: [FastModule.Request].self)
+                
+                let count = handleInsert(
+                    section,
+                    requests,
+                    parameter.truthy("static"),
+                    parameter["size"] as? String
+                )
+                
+                responder.success(value: count)
+            } catch {
+                responder.failure(error: error)
+            }
             
-            let count = handleInsert(
-                section,
-                requests,
-                parameter.truthy("static"),
-                parameter["size"] as? String
-            )
-            
-            responder.success(value: count)
         }
         
         bindAction(pattern: "refresh/:section/:row") { [weak self] parameter, responder, request in
-            guard let section = parameter.int(":section")
-                else { responder.failure(error: ModuleError.missingParameter(":section")); return }
-            
-            guard let row = parameter.int(":row")
-                else { responder.failure(error: ModuleError.missingParameter(":row")); return }
-            
-            self?.collectionView.reloadItems(at: [IndexPath(row: row, section: section)])
+            do {
+                let section = try parameter.required(":section", type: Int.self)
+                let row = try parameter.required(":row", type: Int.self)
+                self?.collectionView.reloadItems(at: [IndexPath(row: row, section: section)])
+            } catch {
+                responder.failure(error: error)
+            }
             
             responder.success(value: ())
         }
         
         bindAction(pattern: "refresh/:section") { [weak self] parameter, responder, request in
-            guard let section = parameter.int(":section")
-                else { responder.failure(error: ModuleError.missingParameter(":section")); return }
-            
-            self?.collectionView.reloadSections(IndexSet(integer: section))
+
+            do {
+                let section = try parameter.required(":section", type: Int.self)
+                self?.collectionView.reloadSections(IndexSet(integer: section))
+            } catch {
+                responder.failure(error: error)
+            }
             
             responder.success(value: ())
         }
@@ -129,7 +137,7 @@ public class ListModule: NSObject, HNAModule.Module, Layoutable {
             recoverModifications()
         }
         
-        bindProperty(key: "scrollDirection", type: UICollectionViewScrollDirection.self) { [recoverModifications] _ in
+        bindProperty(key: "scrollDirection", type: UICollectionView.ScrollDirection.self) { [recoverModifications] _ in
             recoverModifications()
         }
         
@@ -149,7 +157,7 @@ public class ListModule: NSObject, HNAModule.Module, Layoutable {
             layout.sectionInset = insect
         }
         
-        if let direction = property(key: "scrollDirection", type: UICollectionViewScrollDirection.self) {
+        if let direction = property(key: "scrollDirection", type: UICollectionView.ScrollDirection.self) {
             layout.scrollDirection = direction
         }
         
@@ -164,13 +172,19 @@ public class ListModule: NSObject, HNAModule.Module, Layoutable {
         collectionView.collectionViewLayout = layout
     }
     
-    private func handleInsert(section: Int, requests: [HNARequest], isStatic: Bool, size: String?) -> Int {
+    private func handleInsert(section: Int, requests: [Request], isStatic: Bool, size: String?) -> Int {
         var count = 0
         requests.forEach {
-            let newCellData = CellData(pattern: $0.pattern, rawRequest: $0, isStatic: isStatic, size: size)
+            let newCellData = CellData(pattern: $0.pattern,
+                                       rawRequest: $0,
+                                       isStatic: isStatic,
+                                       size: size)
+            
             count = collectionAdapter.insert(cellData: newCellData, in: section)
         }
+        
         collectionView.reloadData()
+        
         return count
     }
 }

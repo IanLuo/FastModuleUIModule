@@ -6,9 +6,9 @@
 //
 
 import Foundation
-import HNAModule
-import HNAModuleLayoutable
-import HNAModuleRoutable
+import FastModule
+import FastModuleLayoutable
+import FastModuleRoutable
 
 public class AlertModule: Routable {
     public func layoutContent() {
@@ -28,43 +28,41 @@ public class AlertModule: Routable {
     
     public static var routePriority: Int = 1
     
-    public required init(request: HNARequest) {
+    public required init(request: Request) {
         
     }
     
     public func didInit() {
-        observeValue(action: "title", type: String.self) { [weak self] in
+        bindProperty(key: "title", type: String.self) { [weak self] in
             self?.vc.title = $0
         }
         
-        observeValue(action: "message", type: String.self) { [weak self] in
+        bindProperty(key: "message", type: String.self) { [weak self] in
             self?.vc.message = $0
         }
                 
         bindAction(pattern: "add/:style/:title") { [weak self] (parameter, responder, request) in
-            guard let title = parameter.value(":title", type: String.self) else {
-                responder.failure(error: ModuleError.missingParameter(":title"))
-                return
+        
+            do {
+                let title = try parameter.required(":title", type: String.self)
+                let style = try parameter.required(":style", type: String.self)
+                
+                guard let s = self?.actionStyle(style: style) else {
+                    throw ModuleError.wrongValue("should be one of 'default, cancel, delete'", ":style")
+                }
+                
+                self?.vc.addAction(UIAlertAction(title: title, style: s, handler: { _ in
+                    self?.back()
+                    self?.notify(action: ActionKey.didSelect.rawValue, value: title)
+                }))
+            } catch {
+                responder.failure(error: error)
             }
             
-            guard let style = parameter.value(":style", type: String.self) else {
-                responder.failure(error: ModuleError.missingParameter(":style"))
-                return
-            }
-            
-            guard let s = self?.actionStyle(style: style) else {
-                responder.failure(error: ModuleError.wrongValue("should be one of 'default, cancel, delete'", ":style"))
-                return
-            }
-            
-            self?.vc.addAction(UIAlertAction(title: title, style: s, handler: { _ in
-                self?.back()
-                self?.notify(action: ActionKey.didSelect.rawValue, value: title)
-            }))
         }
     }
     
-    private func actionStyle(style: String) -> UIAlertActionStyle? {
+    private func actionStyle(style: String) -> UIAlertAction.Style? {
         switch style {
         case "default":
             return .default
