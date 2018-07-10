@@ -66,6 +66,7 @@ public class CollectionViewAdapter: NSObject, UICollectionViewDataSource, UIColl
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cellData = viewModel.cellData(for: indexPath)
         
+        // if the url is new, add to the regiested list
         if !registered.contains(cellData.pattern) {
             // get reuse cell type based on url
             collectionView.register(GeneralCell.self, forCellWithReuseIdentifier: cellData.pattern)
@@ -112,6 +113,7 @@ public class CollectionViewAdapter: NSObject, UICollectionViewDataSource, UIColl
         }
     }
     
+    /// initial the cell content with the layoutable
     public func collectionView(_ collectionView: UICollectionView, willDisplaySupplementaryView view: UICollectionReusableView, forElementKind elementKind: String, at indexPath: IndexPath) {
         if let view = view as? GeneralReuseView {
             let cellData = viewModel.sectionHeaderData(section: indexPath.section)!
@@ -120,6 +122,8 @@ public class CollectionViewAdapter: NSObject, UICollectionViewDataSource, UIColl
         }
     }
     
+    /// when display completes, return the module instance back to the pool
+    /// and remove the reference of the layoutable on the cell
     public func collectionView(_ collectionView: UICollectionView, didEndDisplayingSupplementaryView view: UICollectionReusableView, forElementOfKind elementKind: String, at indexPath: IndexPath) {
         if let view = view as? GeneralReuseView {
             let cellData = viewModel.sectionHeaderData(section: indexPath.section)!
@@ -129,6 +133,9 @@ public class CollectionViewAdapter: NSObject, UICollectionViewDataSource, UIColl
         }
     }
     
+    /// get cell instance from module pool
+    /// if the cell is not static cell, means the display content of the module is dynamically rendered based on the request
+    /// run the request again
     public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if let cell = cell as? GeneralCell {
             let cellData = viewModel.cellData(for: indexPath)
@@ -157,6 +164,7 @@ public class CollectionViewAdapter: NSObject, UICollectionViewDataSource, UIColl
         return getSize(cellData: viewModel.cellData(for: indexPath), collectionView: collectionView)
     }
     
+    /// get an instance of the corresponding module, use the cellData to calculate the size, then return the cell instance back to the pool
     private func getSize(cellData: CellData, collectionView: UICollectionView) -> CGSize {
         let layoutable = modulePool.getModule(cellData: cellData)
         
