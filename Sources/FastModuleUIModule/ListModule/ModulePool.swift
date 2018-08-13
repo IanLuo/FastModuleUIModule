@@ -1,6 +1,5 @@
 //
 //  ModulePool.swift
-//  HNAModule
 //
 //  Created by ian luo on 21/03/2018.
 //

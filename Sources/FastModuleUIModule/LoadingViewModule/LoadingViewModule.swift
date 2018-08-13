@@ -1,9 +1,8 @@
 //
 //  LoadingViewModule.swift
-//  CFDemo
-//
+
 //  Created by ian luo on 23/03/2018.
-//  Copyright © 2018 hna. All rights reserved.
+//  Copyright © 2018 wod. All rights reserved.
 //
 
 import Foundation

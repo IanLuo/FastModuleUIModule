@@ -11,5 +11,5 @@ Pod::Spec.new do |s|
   s.dependency "FastModule"
   s.dependency "FastModuleLayoutable"
   s.dependency "FastModuleRoutable"
-
+  s.dependency "FastModuleNetwork"
 end
