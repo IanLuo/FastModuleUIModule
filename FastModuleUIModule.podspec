@@ -8,4 +8,8 @@ Pod::Spec.new do |s|
   s.author             = { "luoxu" => "ianluo63@gmail.com" }
   s.source       = { :git => "git@github.com:IanLuo/FastModuleUIModule.git", :tag => "#{s.version}" }
   s.source_files  = "Sources/**/*.swift"
+  s.dependency "FastModule"
+  s.dependency "FastModuleLayoutable"
+  s.dependency "FastModuleRoutable"
+
 end
