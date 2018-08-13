@@ -3,13 +3,13 @@
 //  CFDemo
 //
 //  Created by ian luo on 23/03/2018.
-//  Copyright © 2018 hna. All rights reserved.
+//  Copyright © 2018 wod. All rights reserved.
 //
 
 import Foundation
-import HNAModule
-import HNAModuleLayoutable
-import HTTPModule
+import FastModule
+import FastModuleLayoutable
+import FastModuleNetwork
 import UIKit
 
 public class RemoteImageModule: Layoutable {
@@ -29,23 +29,21 @@ public class RemoteImageModule: Layoutable {
     
     public static var routePriority: Int = 1
     
-    public required init(request: HNAModule.HNARequest) {
-        HTTPModule.register()
-        
+    private lazy var httpModule = FastModuleHTTP.instance(name: "image-download", pattern: "")
+    
+    public required init(request: FastModule.Request) {
         bindProperty(key: "url", type: String.self) { [weak self] url in
             self?.childLayoutable(id: "loading")?
                 .executor(request: "start")
                 .run { _ in }
             
-            HTTPModule.instance()
-                .executor(request: HNARequest(path: "download/#url(\(url))"), type: Data.self)
+            self?.httpModule
+                .executor(request: Request(path: "download/#url(\(url))"), type: Data.self)
                 .map { UIImage(data: $0) }
                 .run { [weak self] in
-                    $0.successes {
-                        self?.imageViewModule.update(properties: ["image": $0 as Any])
-                        self?.childLayoutable(id: "loading")?.fire(request: "stop")
-                    }
-            }
+                    self?.imageViewModule.update(properties: ["image": $0 as Any])
+                    self?.childLayoutable(id: "loading")?.fire(request: "stop")
+                }
         }
         
 
