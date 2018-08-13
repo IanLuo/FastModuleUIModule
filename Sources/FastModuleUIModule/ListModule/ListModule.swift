@@ -47,21 +47,21 @@ public class ListModule: NSObject, FastModule.Module, Layoutable {
     
     private func bindActons() {
         bindAction(pattern: "insert/:section/:request") { [handleInsert] parameter, responder, request in
-            guard let section = parameter.int(":section")
-                else { responder.failure(error: ModuleError.missingParameter(":section")); return }
             
-            guard let request = parameter.value(":request", type: FastModule.Request.self)
-                else { responder.failure(error: ModuleError.missingParameter(":request")); return }
-            
-
-            let count = handleInsert(
-                section,
-                [request],
-                parameter.truthy("static"),
-                parameter["size"] as? String
-            )
-            
-            responder.success(value: count)
+            do {
+                let section = try parameter.required(":section", type: Int.self)
+                let request = try parameter.required(":request", type: FastModule.Request.self)
+                let count = handleInsert(
+                    section,
+                    [request],
+                    parameter.truthy("static"),
+                    parameter["size"] as? String
+                )
+                
+                responder.success(value: count)
+            } catch {
+                responder.failure(error: error)
+            }
         }
         
         bindAction(pattern: "header/:section/:request") { [weak self] (parameter, responder, request) in
